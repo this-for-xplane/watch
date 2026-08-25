@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Blue Archive Galaxy Watch Preview</title>
+    <style>
+        body {
+            background-color: #0b0f19;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 60px 35px;
+            min-height: 100vh;
+            margin: 0;
+            padding: 50px 20px;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* 워치 전체 구조 구획 (스트랩 + 본체 + 버튼) */
+        .watch-wrapper {
+            position: relative;
+            width: 260px;
+            height: 260px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 상하단 실리콘 스트랩 (줄) */
+        .strap {
+            position: absolute;
+            width: 92px;
+            height: 75px;
+            background: linear-gradient(90deg, #181a20 0%, #252830 50%, #181a20 100%);
+            z-index: 1;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.8);
+        }
+        .strap.top {
+            top: -65px;
+            border-radius: 8px 8px 0 0;
+            border-top: 1px solid #333742;
+        }
+        .strap.bottom {
+            bottom: -65px;
+            border-radius: 0 0 8px 8px;
+            border-bottom: 1px solid #333742;
+        }
+
+        /* 메인 워치 케이스 (메탈 러그 포함) */
+        .watch-case {
+            width: 260px;
+            height: 260px;
+            background: linear-gradient(135deg, #283344 0%, #0f1520 100%);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.95), inset 0 0 15px rgba(0, 210, 255, 0.2);
+            position: relative;
+            border: 2px solid #2d3e54;
+            z-index: 2;
+        }
+
+        /* 상하단 워치 러그 (스트랩 결착 고리) */
+        .lug {
+            position: absolute;
+            width: 14px;
+            height: 38px;
+            background: linear-gradient(180deg, #2c384a 0%, #121824 100%);
+            border: 1px solid #3a4c63;
+            z-index: 1;
+        }
+        .lug.top-left { top: -22px; left: 78px; border-radius: 6px 0 0 4px; transform: rotate(-8deg); }
+        .lug.top-right { top: -22px; right: 78px; border-radius: 0 6px 4px 0; transform: rotate(8deg); }
+        .lug.bottom-left { bottom: -22px; left: 78px; border-radius: 4px 0 0 6px; transform: rotate(8deg); }
+        .lug.bottom-right { bottom: -22px; right: 78px; border-radius: 0 4px 6px 0; transform: rotate(-8deg); }
+
+        /* 우측 물리 버튼 (홈 및 뒤로가기) */
+        .side-button {
+            position: absolute;
+            right: -6px;
+            background: linear-gradient(180deg, #3a4b61 0%, #1a222e 100%);
+            border: 1px solid #4a5f7a;
+            border-radius: 3px;
+            z-index: 3;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+        }
+        .side-button.top {
+            top: 62px;
+            width: 7px;
+            height: 28px;
+            border-radius: 4px 2px 2px 4px;
+        }
+        .side-button.bottom {
+            bottom: 62px;
+            width: 6px;
+            height: 20px;
+            border-radius: 3px 2px 2px 3px;
+        }
+
+        /* 베젤 눈금 및 숫자 영역 */
+        .bezel-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            z-index: 4;
+            pointer-events: none;
+        }
+        
+        .bezel-num {
+            position: absolute;
+            font-size: 12px;
+            font-weight: 900;
+            color: #00e5ff;
+            text-shadow: 0 0 5px rgba(0, 229, 255, 0.8), 0 0 10px rgba(0, 229, 255, 0.4);
+            transform-origin: center center;
+        }
+
+        .tick {
+            position: absolute;
+            background-color: #00e5ff;
+            box-shadow: 0 0 4px #00e5ff;
+            transform-origin: center center;
+        }
+
+        .inner-glow-ring {
+            position: absolute;
+            width: 196px;
+            height: 196px;
+            border-radius: 50%;
+            border: 4px solid rgba(0, 210, 255, 0.25);
+            box-shadow: 0 0 12px rgba(0, 210, 255, 0.5), inset 0 0 12px rgba(0, 210, 255, 0.5);
+            z-index: 3;
+        }
+
+        /* 디스플레이 화면 */
+        .watch-screen {
+            width: 174px;
+            height: 174px;
+            background: radial-gradient(circle, #0a1727 0%, #000000 90%);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+            position: relative;
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        .time {
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            color: #00ffff;
+            text-shadow: 0 0 8px rgba(0, 255, 255, 0.8), 0 0 15px rgba(0, 255, 255, 0.4);
+            margin: 4px 0;
+            font-family: 'Arial Black', sans-serif;
+            z-index: 2;
+        }
+
+        .sub-text {
+            font-size: 11px;
+            color: #ffffff;
+            letter-spacing: 1px;
+            text-shadow: 0 0 4px rgba(255,255,255,0.6);
+            font-weight: bold;
+            z-index: 2;
+        }
+
+        .activated {
+            font-size: 14px;
+            font-weight: 900;
+            color: #00ffff;
+            margin-top: 6px;
+            letter-spacing: 1.5px;
+            text-shadow: 0 0 6px rgba(0, 255, 255, 0.9);
+            z-index: 2;
+        }
+
+        .sub-num {
+            font-size: 9px;
+            color: #008eb3;
+            margin-top: 2px;
+            letter-spacing: 1px;
+            z-index: 2;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        const times = [
+            "11:54:03", "09:15:09", "08:17:23", "07:04:51", 
+            "06:01:20", "05:18:45", "03:10:15", "01:50:10"
+        ];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const body = document.body;
+
+            times.forEach((timeStr) => {
+                // 전체 메인 컨테이너
+                const wrapper = document.createElement("div");
+                wrapper.className = "watch-wrapper";
+
+                // 상/하단 스트랩
+                const strapTop = document.createElement("div");
+                strapTop.className = "strap top";
+                const strapBottom = document.createElement("div");
+                strapBottom.className = "strap bottom";
+                wrapper.appendChild(strapTop);
+                wrapper.appendChild(strapBottom);
+
+                // 상/하단 메탈 러그 (4개)
+                ["top-left", "top-right", "bottom-left", "bottom-right"].forEach(pos => {
+                    const lug = document.createElement("div");
+                    lug.className = `lug ${pos}`;
+                    wrapper.appendChild(lug);
+                });
+
+                // 우측 버튼 (2개)
+                const btnTop = document.createElement("div");
+                btnTop.className = "side-button top";
+                const btnBottom = document.createElement("div");
+                btnBottom.className = "side-button bottom";
+                wrapper.appendChild(btnTop);
+                wrapper.appendChild(btnBottom);
+
+                // 워치 원형 본체
+                const watchCase = document.createElement("div");
+                watchCase.className = "watch-case";
+
+                // 베젤 링 및 숫자
+                const bezelRing = document.createElement("div");
+                bezelRing.className = "bezel-ring";
+                
+                const centerX = 130;
+                const centerY = 130;
+
+                for (let i = 0; i < 60; i++) {
+                    const angle = i * 6;
+                    const radian = (angle - 90) * (Math.PI / 180);
+                    const isFiveSec = i % 5 === 0;
+                    
+                    const tick = document.createElement("div");
+                    tick.className = "tick";
+                    
+                    const tickWidth = isFiveSec ? 2.5 : 1;
+                    const tickHeight = isFiveSec ? 7 : 4;
+                    const tickRadius = 100; 
+                    
+                    const tX = centerX + tickRadius * Math.cos(radian);
+                    const tY = centerY + tickRadius * Math.sin(radian);
+                    
+                    tick.style.width = `${tickWidth}px`;
+                    tick.style.height = `${tickHeight}px`;
+                    tick.style.left = `${tX}px`;
+                    tick.style.top = `${tY}px`;
+                    tick.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+                    
+                    if (!isFiveSec) {
+                        tick.style.opacity = "0.4";
+                    }
+                    bezelRing.appendChild(tick);
+
+                    if (isFiveSec) {
+                        const numDiv = document.createElement("div");
+                        numDiv.className = "bezel-num";
+                        numDiv.innerText = i === 0 ? "0" : String(i).padStart(2, '0');
+                        
+                        const numRadius = 117; 
+                        const nX = centerX + numRadius * Math.cos(radian);
+                        const nY = centerY + numRadius * Math.sin(radian);
+                        
+                        numDiv.style.left = `${nX}px`;
+                        numDiv.style.top = `${nY}px`;
+                        numDiv.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+                        
+                        bezelRing.appendChild(numDiv);
+                    }
+                }
+                watchCase.appendChild(bezelRing);
+
+                // 야광 이너 링
+                const innerGlow = document.createElement("div");
+                innerGlow.className = "inner-glow-ring";
+                watchCase.appendChild(innerGlow);
+
+                // 디스플레이 화면
+                const watchScreen = document.createElement("div");
+                watchScreen.className = "watch-screen";
+
+                watchScreen.innerHTML = `
+                    <div class="sub-text">Jer 1:11</div>
+                    <div class="time">${timeStr}</div>
+                    <div class="activated">ACTIVATED</div>
+                    <div class="sub-num">0.890679</div>
+                `;
+
+                watchCase.appendChild(watchScreen);
+                wrapper.appendChild(watchCase);
+                body.appendChild(wrapper);
+            });
+        });
+    </script>
+</body>
+</html>
